@@ -77,8 +77,9 @@ def startBrowser():
     if not 'browser' in config:
         logger.critical('В настройках нет значения для браузера')
         return [False, 'В настройках нет значения для браузера']
-    if config['browser']['visible'] != 1:
+    if int(config['browser']['visible']) != 1:
         opts.add_argument('headless')
+        print(1)
     opts.add_argument('--no-sandbox')
     opts.add_argument('--disable-dev-shm-usage')
     if config['browser']['type'] == 'chrome':
