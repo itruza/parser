@@ -39,7 +39,7 @@ class Plugins(object):
             logger.error('Не произведена передача статуса')
             return [False, 'не произведена передача статуса']
         if 'url' in self.config['rabbit'] or 'login' in self.config['rabbit'] or 'password' in self.config['rabbit'] or 'ip' in self.config['rabbit']:
-            url = f"{self.config['rabbit']['url']}{self.config['rabbit']['login']}{self.config['rabbit']['password']}@{self.config['rabbit']['ip']}"
+            url = f"{self.config['rabbit']['url']}{self.config['rabbit']['login']}:{self.config['rabbit']['password']}@{self.config['rabbit']['ip']}"
             self.params = pika.URLParameters(url)
         else:
             logger.critical('Не произведена настройка конфига!')
