@@ -1,0 +1,24 @@
+version: '3'
+
+# хранилища
+volumes:
+    pgdata:
+        driver: local
+services:
+    parser:
+        restart: always
+        container_name: parser
+# выбрать систему логирования
+        logging:
+          driver: journald
+          options:
+            tag: parser
+# указываем откуда собирать образ
+        build:
+            context: .
+            dockerfile: Dockerfile
+# монтируем директорию проекта
+        volumes:
+            - ./:/home/parser
+# запускаем скрипт
+        command: "python Main.py"
