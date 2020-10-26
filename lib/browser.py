@@ -197,7 +197,7 @@ class Plugins(object):
             self.driver.find_element_by_id('LoadRecordsButton').click()
             status = self.pars_table()
             if not status:
-                self.save_obr(date={'nomdobr': args, 'parsing': False})
+                self.save_obr(date=[{'nomdobr': args, 'parsing': False}])
                 return True
             return True
         else:
