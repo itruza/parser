@@ -60,10 +60,13 @@ class Cli(cmd.Cmd):
     def do_view(self, args):
         """Просмотр параметров конфига """
         global config
-        for i in config:
-            print(i)
-            for j in config[i]:
-                print(f'---{j} = {config[i][j]}')
+        if not args:
+            for i in config:
+                print(i)
+                for j in config[i]:
+                    print(f'---{j} = {config[i][j]}')
+        else:
+            pass
         print('Чтобы изменить небходимо ввести данную команду с аргументом')
 
     def default(self, line):

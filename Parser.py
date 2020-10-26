@@ -79,7 +79,6 @@ def startBrowser():
         return [False, 'В настройках нет значения для браузера']
     if int(config['browser']['visible']) != 1:
         opts.add_argument('headless')
-        print(1)
     opts.add_argument('--no-sandbox')
     opts.add_argument('--disable-dev-shm-usage')
     if config['browser']['type'] == 'chrome':
@@ -159,6 +158,7 @@ def life_plugins():
 def console_input():
     global config
     global status
+    global qbr
     while status.status:
         if config['script']['console'] == '1':
             a = input('Введите номер действия: ')
@@ -215,6 +215,9 @@ def main():
     logger.debug('Запуск подсистемы проверки работоспособности плагинов')
     lp = threading.Thread(target=life_plugins, daemon=True)
     lp.start()
+    if int(config['script']['console']) == 1:
+        threadconsole = threading.Thread(target=console_input, daemon=True)
+        threadconsole.start()
     while status.status:
         time.sleep(2)
     if deb == '1':
