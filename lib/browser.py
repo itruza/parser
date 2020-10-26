@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import xml.etree.ElementTree as xml
 import time
 from loguru import logger
+from tqdm import tqdm
 
 # Название плагина
 name = 'Обработчик задач парсера'
@@ -75,7 +76,7 @@ class Plugins(object):
     def start_page(self):
         url = self.config['browser']['url']
         self.driver.get(url)
-        time.sleep(5)
+        time.sleep(7)
         self.clear_filter()
 
     def next_page(self):
@@ -175,14 +176,18 @@ class Plugins(object):
                         temp = j.text
                         if temp != '':
                             dops.append(temp)
-                    if len(dops) > 1:
-                        data['email'] = dops[0]
-                        data['tel'] = dops[1].split(':')[1].replace(' ', '')
-                    else:
-                        if dops[0].find('@') != -1:
+                    if len(dops) != 0:
+                        if len(dops) > 1:
                             data['email'] = dops[0]
+                            data['tel'] = dops[1].split(':')[1].replace(' ', '')
                         else:
-                            data['tel'] = dops[0].split(':')[1].replace(' ', '')
+                            if dops[0].find('@') != -1:
+                                data['email'] = dops[0]
+                            else:
+                                data['tel'] = dops[0].split(':')[1].replace(' ', '')
+                    else:
+                        data['email'] = None
+                        data['tel'] = None
                     self.save_obr(date=data, type='card')
                 else:
                     logger.error(f'Не совпадение обращения {nom}.')
@@ -193,13 +198,29 @@ class Plugins(object):
 
     def action_1(self, args=None):  # Парсинг определенного обращения
         if args:
-            self.driver.find_element_by_id('id').send_keys(args)
-            self.driver.find_element_by_id('LoadRecordsButton').click()
-            status = self.pars_table()
-            if not status:
-                self.save_obr(date=[{'nomdobr': args, 'parsing': False}])
+            if isinstance(args, list):
+                kol = len(args)
+                logger.debug(f'Запуск задачи №1 количество обращений - {kol}')
+                j = 1
+                for i in tqdm(args, ascii=True, desc='Action №1'):
+                    logger.info(f'Обращение {j}/{kol}')
+                    self.driver.find_element_by_id('id').send_keys(i['nomdobr'])
+                    self.driver.find_element_by_id('LoadRecordsButton').click()
+                    status = self.pars_table()
+                    j += 1
+                    if not status:
+                        self.save_obr(date=[{'nomdobr': args, 'parsing': False}])
+                        return True
+                    self.driver.find_element_by_id('id').clear()
                 return True
-            return True
+            else:
+                self.driver.find_element_by_id('id').send_keys(args)
+                self.driver.find_element_by_id('LoadRecordsButton').click()
+                status = self.pars_table()
+                if not status:
+                    self.save_obr(date=[{'nomdobr': args, 'parsing': False}])
+                    return True
+                return True
         else:
             logger.error('Не правильные аргументы в действии.')
             return None
@@ -252,14 +273,29 @@ class Plugins(object):
 
     def action_4(self, args=None):  # Парсинг авторов в карточках
         if args:
-            url = self.config['browser']['urlcard']
-            nom = args
-            self.driver.get(f'{url}{nom}')
-            time.sleep(2)
-            self.pars_card(nom=nom)
-            time.sleep(2)
-            self.start_page()
-            return True
+            if isinstance(args, list):
+                kol = len(args)
+                logger.debug(f'Запуск задачи №4 количество обращений - {kol}')
+                url = self.config['browser']['urlcard']
+                j = 1
+                for i in args:
+                    logger.info(f'Обращение {j}/{kol}')
+                    self.driver.get(f'{url}{i["nomdobr"]}')
+                    time.sleep(2)
+                    self.pars_card(nom=i["nomdobr"])
+                    time.sleep(2)
+                    j += 1
+                self.start_page()
+                return True
+            else:
+                url = self.config['browser']['urlcard']
+                nom = args
+                self.driver.get(f'{url}{nom}')
+                time.sleep(2)
+                self.pars_card(nom=nom)
+                time.sleep(2)
+                self.start_page()
+                return True
         else:
             logger.error('Не правильные аргументы в действии.')
             return None
