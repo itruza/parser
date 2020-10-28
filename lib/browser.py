@@ -203,15 +203,16 @@ class Plugins(object):
                 logger.debug(f'Запуск задачи №1 количество обращений - {kol}')
                 j = 1
                 for i in tqdm(args, ascii=True, desc='Action №1'):
-                    logger.info(f'Обращение {j}/{kol}')
+                    #logger.info(f'Обращение {j}/{kol}')
                     self.driver.find_element_by_id('id').send_keys(i['nomdobr'])
                     self.driver.find_element_by_id('LoadRecordsButton').click()
                     status = self.pars_table()
                     j += 1
                     if not status:
-                        self.save_obr(date=[{'nomdobr': args, 'parsing': False}])
+                        self.save_obr(date=[{'nomdobr': i['nomdobr'], 'parsing': False}])
                         return True
                     self.driver.find_element_by_id('id').clear()
+                logger.info('Задача №1 выполнена.')
                 return True
             else:
                 self.driver.find_element_by_id('id').send_keys(args)
@@ -246,6 +247,7 @@ class Plugins(object):
                     break
             else:
                 logger.debug('Не найдено обращений, заверщение действия.')
+        logger.info('Задача №2 выполнена.')
         return True
 
     def action_3(self, args=None):  # Парсинг фильтрацией по полям "Дата создания"
@@ -269,6 +271,7 @@ class Plugins(object):
                     break
             else:
                 logger.debug('Не найдено обращений, заверщение действия.')
+        logger.info('Задача №3 выполнена.')
         return True
 
     def action_4(self, args=None):  # Парсинг авторов в карточках
@@ -278,7 +281,7 @@ class Plugins(object):
                 logger.debug(f'Запуск задачи №4 количество обращений - {kol}')
                 url = self.config['browser']['urlcard']
                 j = 1
-                for i in args:
+                for i in tqdm(args, ascii=True, desc='Action №4'):
                     logger.info(f'Обращение {j}/{kol}')
                     self.driver.get(f'{url}{i["nomdobr"]}')
                     time.sleep(2)
@@ -286,6 +289,7 @@ class Plugins(object):
                     time.sleep(2)
                     j += 1
                 self.start_page()
+                logger.info('Задача №4 выполнена.')
                 return True
             else:
                 url = self.config['browser']['urlcard']

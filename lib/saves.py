@@ -38,7 +38,7 @@ class Plugins(object):
     def run_saves(self, data):
         url = self.config['script']['typesite'] + '://' + self.config['script']['ipsite'] + ':' + self.config['script']['portsite'] + '/api/problems/saves/'
         try:
-            r = requests.post(url, data=json.dumps(data), verify=False)
+            r = requests.post(url, data=json.dumps(data))
         except Exception as e:
             logger.error(f'Ошибка при отправки сохранения. Ошибка: {e}')
             logger.error(f'Форма запроса: {data}')
