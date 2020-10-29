@@ -7,7 +7,7 @@ volumes:
 services:
     parser:
         restart: always
-        container_name: parser
+        container_name: parser_v2
 # выбрать систему логирования
         logging:
           driver: journald
