@@ -5,3 +5,4 @@ pika
 lxml
 requests
 loguru
+tqdm
