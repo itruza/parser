@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from loguru import logger
+from datetime import datetime
 import importlib
 import os
 import argparse
@@ -11,10 +12,10 @@ import configparser
 config = configparser.ConfigParser()
 
 
-def start_script():
+def start_script(task=None):
     mainlib = importlib.import_module(name)
     while True:
-        command = mainlib.main()
+        command = mainlib.main(start_action=task)
         if command == 'exit':
             break
         logger.info('Перезапуск скрипта...')
@@ -88,6 +89,14 @@ if __name__ == '__main__':
     loadconfig()
     if args.s == 0:
         start_script()
+    elif args.s == 1:
+        nowdate = datetime.now()
+        if nowdate.month <= 10:
+            mes = f'0{nowdate.month-1}'
+        else:
+            mes = str(nowdate.month-1)
+        task = {'nom': '2', 'args': f"01.{mes}.{nowdate.year}"}
+        start_script(task=task)
     else:
         cli = Cli()
         try:

@@ -109,6 +109,7 @@ class Plugins(object):
             ele.click()
         self.driver.find_element_by_id('id').click()
         if load:
+            self.driver.find_element_by_id('id').click()
             self.driver.find_element_by_id('LoadRecordsButton').click()
             a = Select(self.driver.find_element_by_xpath('/html/body/div[2]/div[3]/div/div[2]/div/div[4]/div[1]/span[3]/select'))
             a.select_by_value('25')
@@ -210,7 +211,6 @@ class Plugins(object):
                     j += 1
                     if not status:
                         self.save_obr(date=[{'nomdobr': i['nomdobr'], 'parsing': False}])
-                        return True
                     self.driver.find_element_by_id('id').clear()
                 logger.info('Задача №1 выполнена.')
                 return True
@@ -282,7 +282,6 @@ class Plugins(object):
                 url = self.config['browser']['urlcard']
                 j = 1
                 for i in tqdm(args, ascii=True, desc='Action №4'):
-                    logger.info(f'Обращение {j}/{kol}')
                     self.driver.get(f'{url}{i["nomdobr"]}')
                     time.sleep(2)
                     self.pars_card(nom=i["nomdobr"])

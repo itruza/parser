@@ -183,7 +183,7 @@ def console_input():
                 logger.error('Такой команды не существует.')
 
 
-def main():
+def main(start_action=None):
     global driver
     global config
     global qs
@@ -215,6 +215,10 @@ def main():
     logger.debug('Запуск подсистемы проверки работоспособности плагинов')
     lp = threading.Thread(target=life_plugins, daemon=True)
     lp.start()
+    if start_action:
+        time.sleep(2)
+        temp_task = {'type': 'console', 'nom': start_action['nom'], 'args': start_action['args']}
+        qbr.put(temp_task)
     if int(config['script']['console']) == 1:
         threadconsole = threading.Thread(target=console_input, daemon=True)
         threadconsole.start()
